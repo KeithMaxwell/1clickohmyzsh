@@ -124,6 +124,6 @@ sed -i 's/plugins=(git)/plugins=(git zsh-autosuggestions zsh-syntax-highlighting
 
 # 设置默认终端
 echo "input your password to set zsh as default shell"
-chsh -s $(which zsh)
+sudo chsh -s $(which zsh) $(whoami)
 
 echo "please relogin to make configration take effect"
