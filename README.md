@@ -1,5 +1,7 @@
 # 1clickohmyzsh
 
+一条命令安装oh my zsh。再附加两个常用的插件：语法高亮和自动提示。
+
 ## Warning
 
 该脚本仅支持在ubuntu/centos/mac上运行。
