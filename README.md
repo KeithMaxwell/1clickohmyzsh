@@ -15,3 +15,10 @@
 ## Note
 
 该脚本中oh my zsh的安装使用的是清华大学的镜像，插件的安装使用的是南京大学的镜像。
+
+## install by 1 command
+
+```shell
+curl -L https://raw.githubusercontent.com/KeithMaxwell/1clickohmyzsh/main/1click_install.sh | bash
+```
+
