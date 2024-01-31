@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+
+
+
+
 function ubuntu_config() {
     if ! command -v git &> /dev/null
     then
@@ -70,6 +74,14 @@ if [ "$os_name" == "Darwin" ]; then
     echo "Mac Configuration."
     mac_config
 elif [ "$os_name" == "Linux" ]; then
+    # 这段代码的工作原理是尝试运行git命令。如果git命令不存在，那么command -v git将返回一个非零的退出状态，
+    # if语句就会执行then后面的代码块。
+    if ! command -v lsb_release -a &> /dev/null
+    then
+        echo "lsb_release is not working. Please install lsb_release first.Exiting"
+        exit
+    fi
+
     # 使用lsb_release -a命令获取发行版的名称
     os_info=$(lsb_release -a 2>/dev/null | grep "Distributor ID:" | cut -d ":" -f2)
 
@@ -78,8 +90,13 @@ elif [ "$os_name" == "Linux" ]; then
     elif [[ "$os_info" == *"CentOS"* ]] || [[ "$os_info" == *"Red Hat"* ]]; then
         centos_config
     else
-        echo "This is not Ubuntu, Debian, CentOS, or Red Hat. Exiting"
-        exit
+        echo "Your os is not Ubuntu, Debian, CentOS, or Red Hat. If you installed git and zsh, you can continue."
+        read -p "continue? (y or n)" choice
+        if [ "$choice" == "y" ] || [ "$choice" == "yes" ]; then
+            echo "continue"
+        else
+            echo "exiting"
+            exit
     fi
         
 else
