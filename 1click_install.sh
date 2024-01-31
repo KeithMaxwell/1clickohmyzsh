@@ -153,8 +153,12 @@ sed -i 's/plugins=(git)/plugins=(git zsh-autosuggestions zsh-syntax-highlighting
 # 清理安装文件
 rm -rf ~/ohmyzsh
 
-# 设置默认终端
-echo "input your password to set zsh as default shell"
-sudo chsh -s "$(which zsh)" "$(whoami)"
 
+if [[ $SHELL == *zsh* ]]; then
+    echo "zsh is already the default shell."
+else
+    # 设置默认终端
+    echo "you may need to input your password to set zsh as default shell"
+    sudo chsh -s "$(which zsh)" "$(whoami)"
+fi
 echo "please relogin to make configration take effect"
