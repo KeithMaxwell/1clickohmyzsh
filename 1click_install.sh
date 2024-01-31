@@ -1,11 +1,9 @@
 #!/bin/bash
 set -e
 
-
-
-
-
-function ubuntu_config() {
+function apt_config() {
+    # 这段代码的工作原理是尝试运行git命令。如果git命令不存在，那么command -v git将返回一个非零的退出状态，
+    # if语句就会执行then后面的代码块。
     if ! command -v git &> /dev/null
     then
         # 1. 安装git
@@ -23,10 +21,7 @@ function ubuntu_config() {
 
 }
 
-function centos_config() {
-
-    # 这段代码的工作原理是尝试运行git命令。如果git命令不存在，那么command -v git将返回一个非零的退出状态，
-    # if语句就会执行then后面的代码块。
+function yum_config() {
     if ! command -v git &> /dev/null
     then
         # 1. 安装git
@@ -74,32 +69,21 @@ if [ "$os_name" == "Darwin" ]; then
     echo "Mac Configuration."
     mac_config
 elif [ "$os_name" == "Linux" ]; then
-    # 这段代码的工作原理是尝试运行git命令。如果git命令不存在，那么command -v git将返回一个非零的退出状态，
-    # if语句就会执行then后面的代码块。
-    if ! command -v lsb_release -a &> /dev/null
+
+    command -v apt --version &> /dev/null
+    apt_status=$?
+    command -v yum --version &> /dev/null
+    yum_status=$?
+    if [ "$apt_status" = 0 ];
     then
-        echo "lsb_release is not working. Please install lsb_release first.Exiting"
-        exit
-    fi
-
-    # 使用lsb_release -a命令获取发行版的名称
-    os_info=$(lsb_release -a 2>/dev/null | grep "Distributor ID:" | cut -d ":" -f2)
-
-    if [[ "$os_info" == *"Ubuntu"* ]] || [[ "$os_info" == *"Debian"* ]]; then
-        ubuntu_config
-    elif [[ "$os_info" == *"CentOS"* ]] || [[ "$os_info" == *"Red Hat"* ]]; then
-        centos_config
+        apt_config
+    elif [ "$yum_status" = 0 ];
+    then
+        yum_config
     else
-        echo "Your os is not Ubuntu, Debian, CentOS, or Red Hat. If you installed git and zsh, you can continue."
-        read -p "continue? (y or n)" choice
-        if [ "$choice" == "y" ] || [ "$choice" == "yes" ]; then
-            echo "continue"
-        else
-            echo "exiting"
-            exit
-        fi
-    fi
-        
+        echo "apt and yum are not working. "
+        exit
+    fi      
 else
     echo "This is not a Mac or Linux. Exiting"
     exit
@@ -112,7 +96,7 @@ cd
 
 # Git 可能无法验证清华镜像服务器的 SSL 证书。
 # 这并不意味着证书有问题，但可能是自签名的，或者由一个不在您的操作系统的 CA 列表中的机构/公司签名的。
-if  ! command -v sslverify=$(git config --global --get http.sslverify) 
+if  ! command -v "sslverify=$(git config --global --get http.sslverify)"
     then
         if [ -z "$sslverify" ]; then
             # 将其设置为false
@@ -125,11 +109,6 @@ if  ! command -v sslverify=$(git config --global --get http.sslverify)
         fi
     fi
 sslverify=$(git config --global --get http.sslverify)
-
-
-sslverify_state=$sslverify
-
-
 
 # 下载oh-my-zsh安装脚本
 git clone https://mirrors.tuna.tsinghua.edu.cn/git/ohmyzsh.git
@@ -163,6 +142,6 @@ rm -rf ~/ohmyzsh
 
 # 设置默认终端
 echo "input your password to set zsh as default shell"
-sudo chsh -s $(which zsh) $(whoami)
+sudo chsh -s "$(which zsh)" "$(whoami)"
 
 echo "please relogin to make configration take effect"
