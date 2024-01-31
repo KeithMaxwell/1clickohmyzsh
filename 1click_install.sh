@@ -97,6 +97,7 @@ elif [ "$os_name" == "Linux" ]; then
         else
             echo "exiting"
             exit
+        fi
     fi
         
 else
