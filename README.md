@@ -4,13 +4,15 @@
 
 ## Warning
 
-该脚本仅支持在ubuntu/centos/mac上运行，**Windows无法使用**。
+该脚本仅支持在linux/mac上运行，**Windows无法使用**。git和zsh若没有安装，只支持有apt或yum包管理系统自动安装。
 
 如果您的系统基于 Debian/Redhat，您可以尝试运行此脚本，它很可能是可以用的。
 
+如果您的系统已经安装了git以及zsh，则也可以运行此脚本。
+
 ## Dependency
 
-请确保`grep`,  lsb_release 命令可以在您的计算机上运行。 如果没有，就想办法安装。
+请确保`grep` 命令可以在您的计算机上运行。 如果没有，就想办法安装。
 
 请确保您具有 sudo 权限。 没有它就无法工作。
 

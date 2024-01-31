@@ -1,6 +1,5 @@
 #!/bin/bash
-set -e
-
+# set -e
 function apt_config() {
     # 这段代码的工作原理是尝试运行git命令。如果git命令不存在，那么command -v git将返回一个非零的退出状态，
     # if语句就会执行then后面的代码块。
@@ -12,7 +11,7 @@ function apt_config() {
         echo "git is installed."
     fi
 
-    if grep -q "/bin/zsh" /etc/shells; then
+    if grep -q "zsh$" /etc/shells; then
         echo "zsh is installed."
     else
         # 2. 安装zsh
@@ -31,7 +30,7 @@ function yum_config() {
     fi
 
     # 判断zsh是否已经安装
-    if grep -q "/bin/zsh" /etc/shells; then
+    if grep -q "zsh$" /etc/shells; then
         echo "zsh is installed."
     else
         # 2. 安装zsh
@@ -50,7 +49,7 @@ function mac_config() {
     fi
 
     # 判断zsh是否已经安装
-    if grep -q "/bin/zsh" /etc/shells; then
+    if grep -q "zsh$" /etc/shells; then
         echo "zsh is installed."
     else
         # 2. 安装zsh
@@ -59,6 +58,20 @@ function mac_config() {
 
 }
 
+function other_config() {
+    command -v git &> /dev/null
+    git_status=$?
+    grep -q "zsh$" /etc/shells
+    zsh_status=$?
+
+    if [ "$git_status" = 0 ] && [ "$zsh_status" = 0 ] ;
+    then
+        echo "continueing"
+    else
+        echo "git or zsh is not installed. Please install git and zsh. Exiting"
+        exit
+    fi
+}
 
 echo "you may need to input your password to install some dependent packages(git zsh)"
 
@@ -82,7 +95,7 @@ elif [ "$os_name" == "Linux" ]; then
         yum_config
     else
         echo "apt and yum are not working. "
-        exit
+        other_config
     fi      
 else
     echo "This is not a Mac or Linux. Exiting"
@@ -92,7 +105,7 @@ fi
 
 
 # 进入用户目录
-cd
+cd || exit
 
 # Git 可能无法验证清华镜像服务器的 SSL 证书。
 # 这并不意味着证书有问题，但可能是自签名的，或者由一个不在您的操作系统的 CA 列表中的机构/公司签名的。
@@ -103,18 +116,18 @@ if  ! command -v "sslverify=$(git config --global --get http.sslverify)"
             git config --global http.sslverify false
         else
             if [ "$sslverify" == "true" ]; then
+            sslverify_old=$sslverify
             # 先关掉这个验证
             git config --global http.sslverify false
             fi
         fi
     fi
-sslverify=$(git config --global --get http.sslverify)
 
 # 下载oh-my-zsh安装脚本
 git clone https://mirrors.tuna.tsinghua.edu.cn/git/ohmyzsh.git
 
 # 执行oh-my-zsh安装脚本
-cd ohmyzsh/tools
+cd ohmyzsh/tools || exit
 REMOTE=https://mirrors.tuna.tsinghua.edu.cn/git/ohmyzsh.git sh install.sh <<EOF
 Y
 EOF
@@ -122,18 +135,18 @@ EOF
 
 
 # 安装zsh-autosuggestions插件， 使用南京大学的镜像
-git clone https://mirror.nju.edu.cn/git/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+git clone https://mirror.nju.edu.cn/git/zsh-autosuggestions "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"
 
 # 安装zsh-syntax-highlighting插件 使用南京大学的镜像
-git clone https://mirror.nju.edu.cn/git/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+git clone https://mirror.nju.edu.cn/git/zsh-syntax-highlighting.git "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting"
 
 # 如果之前是true，就把它改回去
-if [ "$sslverify" == "true" ]; then 
+if [ "$sslverify_old" == "true" ]; then 
     git config --global http.sslverify true
 fi
 
 # 切换到用户的根目录
-cd
+cd || exit
 # 修改.zshrc文件中的plugins配置
 sed -i 's/plugins=(git)/plugins=(git zsh-autosuggestions zsh-syntax-highlighting)/' .zshrc
 
