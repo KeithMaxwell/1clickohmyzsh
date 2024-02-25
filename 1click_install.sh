@@ -133,6 +133,9 @@ Y
 EOF
 # 这里是为了跳过安装过程中的输入提示，直接输入Y
 
+# 创建zsh插件目录(如果不存在，git可能出现bug)
+mkdir "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"
+mkdir "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting·"
 
 # 安装zsh-autosuggestions插件， 使用南京大学的镜像
 git clone https://mirror.nju.edu.cn/git/zsh-autosuggestions "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"
