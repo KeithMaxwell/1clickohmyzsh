@@ -133,15 +133,21 @@ Y
 EOF
 # 这里是为了跳过安装过程中的输入提示，直接输入Y
 
+ZSH_CUSTOM=~/.oh-my-zsh/custom
+
 # 创建zsh插件目录(如果不存在，git可能出现bug)
-mkdir "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"
-mkdir "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting·"
+mkdir "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
+mkdir "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
+
+cd $ZSH_CUSTOM/plugins || (echo "can not enter zsh custom plugin directory" && exit)
 
 # 安装zsh-autosuggestions插件， 使用南京大学的镜像
-git clone https://mirror.nju.edu.cn/git/zsh-autosuggestions "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"
+# git clone https://mirror.nju.edu.cn/git/zsh-autosuggestions "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"
+git clone https://mirror.nju.edu.cn/git/zsh-autosuggestions
 
 # 安装zsh-syntax-highlighting插件 使用南京大学的镜像
-git clone https://mirror.nju.edu.cn/git/zsh-syntax-highlighting.git "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting"
+# git clone https://mirror.nju.edu.cn/git/zsh-syntax-highlighting.git "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting"
+git clone https://mirror.nju.edu.cn/git/zsh-syntax-highlighting.git
 
 # 如果之前是true，就把它改回去
 if [ "$sslverify_old" == "true" ]; then 
